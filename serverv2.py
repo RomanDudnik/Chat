@@ -30,7 +30,7 @@ class ChatServer:
                 messege = client_socket.recv(1024).decode("utf-8")
             
                 if messege:
-                    self.broadcast_messege(f"{client_name}: {messege}")
+                    self.broadcast_message(f"{client_name}: {messege}")
                 else:
                     self.remove_client(client_name, client_socket)
                     break
