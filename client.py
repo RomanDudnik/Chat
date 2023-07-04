@@ -1,12 +1,10 @@
 import socket
 import threading
 
-# Choosing Nickname
-nickname = input("Enter your nickname: \n")
-
-# client.connect(('91.200.148.112', 55555))
-ip_addr = input ("Enter server IP: \n")
-port = int(input("Enter server Port: \n"))
+# Ввод данных для подключения к серверу
+nickname = input("Введите ваш никнэйм: \n")
+ip_addr = input ("Введите IP сервера: \n")
+port = int(input("Введите Port сервера: \n"))
 
 # Создаем сокет для подключения к серверу:
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -14,14 +12,8 @@ client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 # Подключимся к серверу:
 client.connect((ip_addr, port))
 
-# Определим функцию для отправки сообщений.
-# В цикле программа считывает сообщения от пользователя функцией input().
-# Затем сообщение отправляется на сервер с помощью метода .send()
-# Сообщение кодируется в байтовую кодировку методом encode().
-def write():
-    while True:
-        message = '{}: {}'.format(nickname, input(''))
-        client.send(message.encode('utf-8'))
+# Отправка ника на сервер
+client.send(nickname.encode('utf-8'))
 
 # Определим функцию для приема сообщений от сервера.
 # В цикле принимаются сообщения от сервера, декодируются из байтовой кодировки в строку
@@ -29,18 +21,27 @@ def write():
 def receive():
     while True:
         try:
-            # Receive Message From Server
-            # If 'NICK' Send Nickname
+            # Прием сообщения от сервера
             message = client.recv(1024).decode('utf-8')
             if message == 'NICK':
+                # Если сервер запрашивает ник, отправляем его
                 client.send(nickname.encode('utf-8'))
             else:
+                # Выводим сообщеня в чат
                 print(message)
         except:
-            # Close Connection When Error
-            print("An error occured!")
+            print("Ошибка подключения к серверу!!!")
             client.close()
             break
+        
+# Определим функцию для отправки сообщений.
+# В цикле программа считывает сообщения от пользователя функцией input().
+# Затем сообщение отправляется на сервер с помощью метода .send()
+# Сообщение кодируется в байтовую кодировку методом encode().
+def write():
+    while True:
+        message = f'{nickname}: {input("")}'
+        client.send(message.encode('utf-8'))
 
 
 # Создадим два потока для отправки и приема сообщений:
